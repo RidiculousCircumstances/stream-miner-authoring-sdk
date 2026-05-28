@@ -1,0 +1,5 @@
+global-include *.pyi
+include README.md
+include mypy.ini
+include setup.cfg
+include setup.py

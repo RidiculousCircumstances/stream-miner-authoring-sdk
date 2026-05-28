@@ -1,0 +1,34 @@
+{
+  "name": "stream-miner-sdk",
+  "version": "0.1.0",
+  "description": "Types-only authoring package for Stream Miner JavaScript parsers",
+  "type": "module",
+  "types": "./index.d.ts",
+  "license": "UNLICENSED",
+  "keywords": [
+    "stream-miner",
+    "parser-sdk",
+    "typescript",
+    "types"
+  ],
+  "homepage": "https://github.com/RidiculousCircumstances/stream-miner-authoring-sdk#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RidiculousCircumstances/stream-miner-authoring-sdk.git",
+    "directory": "javascript"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}
