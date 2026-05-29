@@ -28,15 +28,13 @@ Stream Miner through the platform-pinned SDK and Agent host protocol.
 - Type declaration entrypoint: `index.d.ts`.
 - Runtime implementation: platform-owned, not included here.
 
-## Client Installation
-
-For a client parser repository:
+## Installation
 
 ```bash
 npm install --save-dev stream-miner-sdk
 ```
 
-Then parser code can keep the normal import surface:
+## Usage
 
 ```ts
 import { BaseParser, configField, defineConfig } from 'stream-miner-sdk';
@@ -46,70 +44,31 @@ This package contains declarations only. Parser code that needs HTTP, Egress,
 queue, logs, metrics, assets, or outputs must be published and run through
 Stream Miner.
 
-## Maintainer Checklist Before Publish
+## Example
 
-- Confirm the public surface still matches the platform JavaScript SDK contract.
-- Run authoring type verification from the repository root.
-- Inspect the npm tarball contents before publishing.
-- Publish with public access.
-- Install the published package in a scratch project and run `tsc --noEmit`.
-- Do not reuse a version after upload.
+```ts
+import { BaseParser, configField, defineConfig } from 'stream-miner-sdk';
 
-## Maintainer Commands
+export default class Parser extends BaseParser {
+  static parserAlias = 'catalog_parser';
 
-From the repository root:
-
-```bash
-make verify-javascript
-make verify
-git diff --check
+  static Config = defineConfig({
+    start_url: configField('https://example.test', {
+      label: 'Start URL',
+    }),
+  });
+}
 ```
 
-Inspect the package:
-
-```bash
-cd javascript
-npm ci
-npm run typecheck
-npm run pack:dry-run
-```
-
-Copy the included parser example:
+A full example parser is available at:
 
 ```bash
 cp node_modules/stream-miner-sdk/examples/catalog-parser.ts ./catalog-parser.ts
 ```
 
-Publish to npm:
+## Type Checking
 
 ```bash
-npm login
-npm publish --access public
+npm install
+npx tsc --noEmit
 ```
-
-Install in a scratch project:
-
-```bash
-mkdir -p /tmp/stream-miner-sdk-npm-check
-cd /tmp/stream-miner-sdk-npm-check
-npm init -y
-npm install --save-dev typescript stream-miner-sdk@0.1.0
-cat > parser.ts <<'EOF'
-import { BaseParser, configField, defineConfig } from 'stream-miner-sdk';
-
-export default class Parser extends BaseParser {
-  static parserAlias = 'install_check';
-  static Config = defineConfig({
-    start_url: configField('https://example.test', { label: 'Start URL' }),
-  });
-}
-EOF
-npx tsc --noEmit --strict --moduleResolution bundler --module ESNext --target ES2022 parser.ts
-```
-
-## Preferred Registry Automation
-
-For cloud-hosted CI, use npm Trusted Publishing/OIDC and provenance instead of
-a long-lived npm token. For a self-hosted runner, npm Trusted Publishing may not
-be available yet; use manual publish or a tightly scoped npm automation token
-until the registry supports your runner model.

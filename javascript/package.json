@@ -1,6 +1,6 @@
 {
   "name": "stream-miner-sdk",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Types-only authoring package for Stream Miner JavaScript parsers",
   "type": "module",
   "types": "./index.d.ts",
