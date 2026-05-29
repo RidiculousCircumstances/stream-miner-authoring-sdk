@@ -1,4 +1,5 @@
 global-include *.pyi
+recursive-include examples *.py
 include README.md
 include mypy.ini
 include setup.cfg

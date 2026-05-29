@@ -11,8 +11,12 @@ class ConfigFieldOption:
 
     value: str
     label: str | None
-    def __init__(self, value: str, label: str | None = None) -> None: ...
-    def to_dict(self) -> dict[str, str | None]: ...
+    def __init__(self, value: str, label: str | None = None) -> None:
+        """Create one selectable config option."""
+        ...
+    def to_dict(self) -> dict[str, str | None]:
+        """Serialize the option into parser revision metadata."""
+        ...
 
 class ParserConfigField:
     """Metadata for one parser config field extracted from a dataclass."""
@@ -31,8 +35,12 @@ class ParserConfigField:
         description: str | None = None,
         placeholder: str | None = None,
         options: tuple[ConfigFieldOption, ...] = ...,
-    ) -> None: ...
-    def to_dict(self) -> dict[str, Any]: ...
+    ) -> None:
+        """Create metadata for one parser config field."""
+        ...
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize the field into parser revision metadata."""
+        ...
 
 def config_field(
     default: Any = ...,
@@ -45,7 +53,11 @@ def config_field(
     choices: list[Any] | tuple[Any, ...] | None = None,
     options: list[RawConfigOption] | tuple[RawConfigOption, ...] | None = None,
 ) -> Any:
-    """Declare parser config metadata on a dataclass field."""
+    """Declare parser config metadata on a dataclass field.
+
+    Example:
+        start_url: str = config_field("https://example.test", label="Start URL")
+    """
     ...
 
 def config_defaults(config_cls: type[Any]) -> dict[str, Any]:

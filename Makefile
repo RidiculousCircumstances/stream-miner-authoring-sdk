@@ -13,7 +13,7 @@ verify-python: clean-python-check
 	$(PYTHON) -m venv $(PYTHON_CHECK_VENV)
 	$(PYTHON_CHECK_VENV)/bin/python -m pip install --upgrade pip mypy
 	$(PYTHON_CHECK_VENV)/bin/python -m pip install $(PYTHON_WHEEL_DIR)/stream_miner_sdk_stubs-*.whl
-	$(PYTHON_CHECK_VENV)/bin/python -m mypy --config-file python/mypy.ini python/tests/fixture_parser.py
+	$(PYTHON_CHECK_VENV)/bin/python -m mypy --config-file python/mypy.ini python/tests/fixture_parser.py python/examples/catalog_parser.py
 
 verify-javascript:
 	cd javascript && $(NPM) ci

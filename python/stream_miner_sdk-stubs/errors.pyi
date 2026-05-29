@@ -16,7 +16,9 @@ class ParserError(Exception):
         *,
         message: str | None = None,
         metadata: Mapping[str, Any] | None = None,
-    ) -> None: ...
+    ) -> None:
+        """Create a parser-declared failure with stable reason metadata."""
+        ...
 
 class ItemRetry(ParserError):
     """Retry the current item with bounded retry metadata."""
@@ -32,7 +34,13 @@ class ItemRetry(ParserError):
         retry_delay_sec: float | None = None,
         message: str | None = None,
         metadata: Mapping[str, Any] | None = None,
-    ) -> None: ...
+    ) -> None:
+        """Ask the runtime to retry the current item.
+
+        Example:
+            raise ItemRetry("rate_limited", max_attempts=3, retry_delay_sec=30)
+        """
+        ...
 
 class ItemFail(ParserError):
     """Fail the current item and let the run continue."""

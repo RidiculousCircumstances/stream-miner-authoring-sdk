@@ -66,6 +66,12 @@ make verify
 git diff --check
 ```
 
+## Example
+
+This repository includes `examples/catalog_parser.py`, a copyable parser example
+that exercises typed config, HTTP, Egress, metrics, datasets, and run-local
+outputs.
+
 Build and inspect the package:
 
 ```bash
@@ -74,6 +80,12 @@ python -m pip install --upgrade build twine setuptools wheel
 rm -rf dist
 python -m build
 python -m twine check dist/*
+```
+
+Copy the repository example into a parser project:
+
+```bash
+cp examples/catalog_parser.py ./catalog_parser.py
 ```
 
 Publish to TestPyPI:

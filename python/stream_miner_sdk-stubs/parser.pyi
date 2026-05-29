@@ -17,18 +17,32 @@ class ParserHost(Protocol):
     """Runtime-owned host binding. Parser code should not implement this directly."""
 
     @property
-    def logger(self) -> Any: ...
+    def logger(self) -> Any:
+        """Structured logger facade supplied by the runtime host."""
+        ...
     @property
-    def egress(self) -> EgressFacade: ...
+    def egress(self) -> EgressFacade:
+        """Parser-facing Egress lease facade supplied by the runtime host."""
+        ...
     @property
-    def queue(self) -> Any: ...
+    def queue(self) -> Any:
+        """Queue facade for adding follow-up parser items."""
+        ...
     @property
-    def results_dir(self) -> Path: ...
+    def results_dir(self) -> Path:
+        """Run output workspace root resolved by the runtime host."""
+        ...
     @property
-    def cookies(self) -> Any: ...
+    def cookies(self) -> Any:
+        """Cookie/session facade where the runtime provides one."""
+        ...
     @property
-    def runtime(self) -> RunContext: ...
-    def thread_id(self) -> str: ...
+    def runtime(self) -> RunContext:
+        """Immutable task/run defaults selected for this parser execution."""
+        ...
+    def thread_id(self) -> str:
+        """Return the current worker thread identifier."""
+        ...
     async def request(
         self,
         method: str,
@@ -36,8 +50,12 @@ class ParserHost(Protocol):
         params: dict[str, Any] | None = None,
         body: Any | None = None,
         options: RequestOptions | None = None,
-    ) -> HttpResponse: ...
-    async def read_sensitive_asset(self, asset_ref: int | str) -> bytes: ...
+    ) -> HttpResponse:
+        """Execute one HTTP request through the Agent host."""
+        ...
+    async def read_sensitive_asset(self, asset_ref: int | str) -> bytes:
+        """Read a sensitive asset as bytes through the runtime host."""
+        ...
     async def publish_dataset(
         self,
         *,
@@ -46,7 +64,9 @@ class ParserHost(Protocol):
         content: bytes | str | None = None,
         content_type: str | None = None,
         metadata: dict[str, Any] | None = None,
-    ) -> DatasetRef: ...
+    ) -> DatasetRef:
+        """Publish content or a workspace file as a durable dataset."""
+        ...
     async def register_output(
         self,
         *,
@@ -55,13 +75,17 @@ class ParserHost(Protocol):
         output_kind: vocab.KindValue = ...,
         content_type: str | None = None,
         metadata: dict[str, Any] | None = None,
-    ) -> LocalOutputHandle: ...
+    ) -> LocalOutputHandle:
+        """Register a workspace file as a run-local output."""
+        ...
     async def metric(
         self,
         name: str,
         value: int | float = 1.0,
         labels: Mapping[str, str] | None = None,
-    ) -> None: ...
+    ) -> None:
+        """Emit one custom parser metric sample."""
+        ...
 
 class BaseParser(Generic[TConfig]):
     """Base class for Python parsers. Runtime operations call the Agent host."""
@@ -72,24 +96,44 @@ class BaseParser(Generic[TConfig]):
     conf: TConfig
 
     @classmethod
-    def default_config(cls) -> dict[str, Any]: ...
+    def default_config(cls) -> dict[str, Any]:
+        """Return defaults extracted from the parser Config declaration."""
+        ...
     @classmethod
-    def config_fields(cls) -> tuple[ParserConfigField, ...]: ...
+    def config_fields(cls) -> tuple[ParserConfigField, ...]:
+        """Return config field metadata for parser revision metadata."""
+        ...
     @classmethod
-    def build_config(cls, raw: dict[str, Any] | None) -> TConfig: ...
+    def build_config(cls, raw: dict[str, Any] | None) -> TConfig:
+        """Build a typed Config instance from raw Control Plane values."""
+        ...
     @property
-    def logger(self) -> Any: ...
+    def logger(self) -> Any:
+        """Structured logger facade; Agent owns shipping and retention."""
+        ...
     @property
-    def egress(self) -> EgressFacade: ...
+    def egress(self) -> EgressFacade:
+        """Parser-facing Egress lease facade."""
+        ...
     @property
-    def queue(self) -> Any: ...
+    def queue(self) -> Any:
+        """Queue facade for adding follow-up parser items."""
+        ...
     @property
-    def results_dir(self) -> Path: ...
+    def results_dir(self) -> Path:
+        """Run output workspace root for files produced by this parser."""
+        ...
     @property
-    def cookies(self) -> Any: ...
+    def cookies(self) -> Any:
+        """Cookie/session facade where the runtime provides one."""
+        ...
     @property
-    def runtime(self) -> RunContext: ...
-    def thread_id(self) -> str: ...
+    def runtime(self) -> RunContext:
+        """Immutable task/run defaults selected for this parser execution."""
+        ...
+    def thread_id(self) -> str:
+        """Return the current worker thread identifier."""
+        ...
     async def request(
         self,
         method: str,
@@ -97,14 +141,22 @@ class BaseParser(Generic[TConfig]):
         params: dict[str, Any] | None = None,
         body: Any | None = None,
         options: RequestOptions | None = None,
-    ) -> HttpResponse: ...
+    ) -> HttpResponse:
+        """Execute one HTTP request through the Agent host."""
+        ...
     async def get(
         self,
         url: str,
         params: dict[str, Any] | None = None,
         *,
         options: RequestOptions | None = None,
-    ) -> HttpResponse: ...
+    ) -> HttpResponse:
+        """Execute an HTTP GET through the Agent host.
+
+        Example:
+            response = await self.get("https://example.test/items", {"page": 1})
+        """
+        ...
     async def post(
         self,
         url: str,
@@ -112,14 +164,18 @@ class BaseParser(Generic[TConfig]):
         params: dict[str, Any] | None = None,
         *,
         options: RequestOptions | None = None,
-    ) -> HttpResponse: ...
+    ) -> HttpResponse:
+        """Execute an HTTP POST through the Agent host."""
+        ...
     async def get_json(
         self,
         url: str,
         params: dict[str, Any] | None = None,
         *,
         options: RequestOptions | None = None,
-    ) -> Any: ...
+    ) -> Any:
+        """Execute a GET and return response.json()."""
+        ...
     async def post_json(
         self,
         url: str,
@@ -127,9 +183,15 @@ class BaseParser(Generic[TConfig]):
         params: dict[str, Any] | None = None,
         *,
         options: RequestOptions | None = None,
-    ) -> Any: ...
-    async def read_sensitive_asset(self, asset_ref: int | str) -> bytes: ...
-    async def read_sensitive_text(self, asset_ref: int | str, *, encoding: str = "utf-8") -> str: ...
+    ) -> Any:
+        """Execute a POST and return response.json()."""
+        ...
+    async def read_sensitive_asset(self, asset_ref: int | str) -> bytes:
+        """Read a sensitive asset as bytes."""
+        ...
+    async def read_sensitive_text(self, asset_ref: int | str, *, encoding: str = "utf-8") -> str:
+        """Read a sensitive asset as decoded text."""
+        ...
     async def publish_dataset(
         self,
         *,
@@ -138,14 +200,22 @@ class BaseParser(Generic[TConfig]):
         content: bytes | str | None = None,
         content_type: str | None = None,
         metadata: dict[str, Any] | None = None,
-    ) -> DatasetRef: ...
+    ) -> DatasetRef:
+        """Publish content or a workspace file as a durable dataset."""
+        ...
     async def publish_json(
         self,
         *,
         name: str,
         payload: Any,
         metadata: dict[str, Any] | None = None,
-    ) -> DatasetRef: ...
+    ) -> DatasetRef:
+        """Publish a JSON-encoded dataset.
+
+        Example:
+            await self.publish_json(name="last-item", payload={"id": "sku-1"})
+        """
+        ...
     async def register_output(
         self,
         *,
@@ -154,21 +224,50 @@ class BaseParser(Generic[TConfig]):
         output_kind: vocab.KindValue = ...,
         content_type: str | None = None,
         metadata: dict[str, Any] | None = None,
-    ) -> LocalOutputHandle: ...
+    ) -> LocalOutputHandle:
+        """Register a workspace file as a run-local output."""
+        ...
     async def metric(
         self,
         name: str,
         value: int | float = 1.0,
         labels: Mapping[str, str] | None = None,
-    ) -> None: ...
-    async def write_text(self, path: str | Path, data: str, *, encoding: str = "utf-8") -> Path: ...
-    async def write_bytes(self, path: str | Path, data: bytes) -> Path: ...
-    def output_path(self, path: str | Path) -> Path: ...
-    async def init(self) -> None: ...
-    async def destroy(self) -> None: ...
-    async def init_thread(self) -> None: ...
-    async def destroy_thread(self) -> None: ...
-    async def parse(self, query: Any) -> None: ...
+    ) -> None:
+        """Emit one custom parser metric sample.
+
+        Example:
+            await self.metric("items_seen", 1, {"source": "catalog"})
+        """
+        ...
+    async def write_text(self, path: str | Path, data: str, *, encoding: str = "utf-8") -> Path:
+        """Write text below the run output workspace and return its path."""
+        ...
+    async def write_bytes(self, path: str | Path, data: bytes) -> Path:
+        """Write bytes below the run output workspace and return its path."""
+        ...
+    def output_path(self, path: str | Path) -> Path:
+        """Resolve a path below the run output workspace."""
+        ...
+    async def init(self) -> None:
+        """Run once before parser work starts."""
+        ...
+    async def destroy(self) -> None:
+        """Run once after parser work finishes or aborts."""
+        ...
+    async def init_thread(self) -> None:
+        """Run before a worker thread starts processing items."""
+        ...
+    async def destroy_thread(self) -> None:
+        """Run after a worker thread stops processing items."""
+        ...
+    async def parse(self, query: Any) -> None:
+        """Handle one queue item.
+
+        Example:
+            response = await self.get(str(query))
+            await self.publish_json(name="last-item", payload=response.json())
+        """
+        ...
 
 def metric_payload(
     name: str,

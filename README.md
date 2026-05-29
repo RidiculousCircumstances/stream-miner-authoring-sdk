@@ -2,9 +2,7 @@
 
 Public authoring packages for Stream Miner parser developers.
 
-This repository intentionally contains type surfaces only. It does not contain
-Stream Miner platform runtime code, Control Plane code, Agent code, queue
-adapters, persistence code, or UI code.
+This repository contains type surfaces.
 
 ## Packages
 
@@ -35,10 +33,10 @@ make pack-python
 make pack-javascript
 ```
 
-## Publish
+## Examples
 
-Use the per-package READMEs:
-
-- `python/README.md`
-- `javascript/README.md`
+- `python/examples/catalog_parser.py`: Python parser example using typed config,
+  HTTP, Egress, metrics, datasets, and run-local outputs.
+- `javascript/examples/catalog-parser.ts`: JavaScript/TypeScript parser example
+  using the same authoring surface.
 

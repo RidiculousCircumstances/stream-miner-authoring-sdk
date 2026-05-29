@@ -11,6 +11,8 @@ Stream Miner through the platform-pinned SDK and Agent host protocol.
 
 - `index.d.ts` declarations for public parser SDK names.
 - JSDoc comments for IDE hover help.
+- `examples/catalog-parser.ts`, a copyable parser example that exercises typed
+  config, HTTP, Egress, metrics, datasets, and run-local outputs.
 - A local TypeScript fixture used by repository verification.
 
 ## Not Included
@@ -70,6 +72,12 @@ cd javascript
 npm ci
 npm run typecheck
 npm run pack:dry-run
+```
+
+Copy the included parser example:
+
+```bash
+cp node_modules/stream-miner-sdk/examples/catalog-parser.ts ./catalog-parser.ts
 ```
 
 Publish to npm:
