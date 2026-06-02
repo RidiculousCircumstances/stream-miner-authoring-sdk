@@ -18,6 +18,7 @@ class DatasetRef:
     content_type: str | None = None
     source_run_id: int | None = None
     source_task_alias: str | None = None
+    source_key: str | None = None
     metadata: dict[str, Any] = ...
     created_at: datetime | None = None
 

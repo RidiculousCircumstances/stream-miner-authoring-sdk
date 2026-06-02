@@ -128,7 +128,9 @@ export interface DatasetRef {
   content_type?: string | null;
   source_run_id?: number | null;
   source_task_alias?: string | null;
+  source_key?: string | null;
   metadata: Record<string, unknown>;
+  created_at?: string | null;
 }
 
 /** Run-local output handle for a file already written in the workspace. */
