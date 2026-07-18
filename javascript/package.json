@@ -1,6 +1,6 @@
 {
   "name": "stream-miner-sdk",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Types-only authoring package for Stream Miner JavaScript parsers",
   "type": "module",
   "types": "./index.d.ts",
@@ -28,6 +28,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "pack:dry-run": "npm pack --dry-run"
+  },
+  "dependencies": {
+    "@types/node": "22.15.21",
+    "playwright-core": "1.60.0"
   },
   "devDependencies": {
     "typescript": "^5"

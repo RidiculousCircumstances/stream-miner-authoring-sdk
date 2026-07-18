@@ -1,3 +1,5 @@
+import type { BrowserContext as PlaywrightBrowserContext, Page as PlaywrightPage } from 'playwright-core';
+
 /** JSON-like config value accepted by parser config metadata. */
 export type ConfigValue = string | number | boolean | null | ConfigObject | ConfigValue[];
 
@@ -45,11 +47,11 @@ export interface MetricsFacade {
 }
 
 /** Queue facade for follow-up work items; broker details remain internal. */
-export interface QueryFacade {
+export interface QueueFacade {
   /** Enqueue one follow-up item for this parser. */
-  add(item: unknown): Promise<void>;
-  /** Alias for add(), useful when parser code models queue writes as pushes. */
   push(item: unknown): Promise<void>;
+  /** Enqueue several follow-up items in one host operation. */
+  pushMany(items: unknown[]): Promise<void>;
 }
 
 /** Runtime reservation for one Egress member. */
@@ -237,6 +239,29 @@ export interface ParseSet {
   query: unknown;
 }
 
+/** Engines available to Agent-managed browser automation. */
+export declare const BrowserEngine: {
+  readonly Chromium: 'chromium';
+  readonly Firefox: 'firefox';
+  readonly WebKit: 'webkit';
+};
+export type BrowserEngine = typeof BrowserEngine[keyof typeof BrowserEngine];
+
+/** JavaScript-only options for a native Playwright session. */
+export interface ManagedBrowserOptions {
+  browserEngine?: BrowserEngine;
+  browser_engine?: BrowserEngine;
+  context?: Record<string, unknown>;
+}
+
+/** Native Playwright objects bound to Agent-owned engine, Egress, and lifecycle. */
+export interface ManagedBrowserSession {
+  browserEngine: BrowserEngine;
+  context: PlaywrightBrowserContext;
+  page: PlaywrightPage;
+  close(): Promise<void>;
+}
+
 /** Base class for JavaScript parsers. Runtime operations call the Agent host. */
 export class BaseParser<TConfig extends ConfigObject = ConfigObject> {
   static parserAlias?: string;
@@ -246,8 +271,8 @@ export class BaseParser<TConfig extends ConfigObject = ConfigObject> {
   conf: TConfig;
   runtime: RuntimeInfo;
   logger: Logger;
-  query: QueryFacade;
-  queue: QueryFacade;
+  query: QueueFacade;
+  queue: QueueFacade;
   egress: EgressFacade;
   cookies: CookieFacade;
   metrics: MetricsFacade;
@@ -299,6 +324,8 @@ export class BaseParser<TConfig extends ConfigObject = ConfigObject> {
     params?: Record<string, unknown>,
     options?: RequestOptions,
   ): Promise<unknown>;
+  /** Open native Playwright context/page objects inside the managed parser sandbox. */
+  openManagedBrowser(options?: ManagedBrowserOptions): Promise<ManagedBrowserSession>;
   /** Read a sensitive asset as bytes. */
   readSensitiveAsset(assetId: number): Promise<Uint8Array>;
   /** Read a sensitive asset as decoded text. */
@@ -383,6 +410,28 @@ export class ParserError extends Error {
   metadata: Record<string, unknown>;
   /** Create a parser-declared failure with a stable reason and optional metadata. */
   constructor(reason: string, options?: ParserFailureOptions);
+}
+
+/** Stable structured failure returned by the Agent host. */
+export interface HostErrorOptions {
+  domain?: string | null;
+  code?: string | null;
+  retryable?: boolean | null;
+  technicalDetail?: string | null;
+  technical_detail?: string | null;
+  errorMeta?: Record<string, unknown>;
+  error_meta?: Record<string, unknown>;
+}
+
+/** Runtime/host failure with a domain-coded, observable cause. */
+export class HostError extends Error {
+  errorCode: 'host_error';
+  domain: string | null;
+  code: string | null;
+  retryable: boolean | null;
+  technicalDetail: string | null;
+  errorMeta: Record<string, unknown>;
+  constructor(message?: string | null, options?: HostErrorOptions);
 }
 
 /** Retry the current item with bounded retry metadata. */

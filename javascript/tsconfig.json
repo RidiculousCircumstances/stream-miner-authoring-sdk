@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": false,
     "baseUrl": ".",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
@@ -10,6 +10,7 @@
       "stream-miner-sdk": ["./index.d.ts"]
     },
     "strict": true,
+    "types": ["node"],
     "target": "ES2022"
   },
   "include": ["examples/**/*.ts", "tests/**/*.ts"]
